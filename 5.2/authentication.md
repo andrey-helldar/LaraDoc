@@ -173,7 +173,7 @@ Laravel обеспечивает быстрое создание всех нео
 <a name="authentication-throttling"></a>
 ### Регулирование аутентификацией
 
-If you are using Laravel's built-in `AuthController` class, the `Illuminate\Foundation\Auth\ThrottlesLogins` trait may be used to throttle login attempts to your application. By default, the user will not be able to login for one minute if they fail to provide the correct credentials after several attempts. The throttling is unique to the user's username / e-mail address and their IP address:
+Если Вы используете встроенный в Laravel класс `AuthController`, трейт `Illuminate\Foundation\Auth\ThrottlesLogins` может быть использован для контроля попытками входа. По-умолчанию, пользователь не сможет авторизоваться в течение одной минуты, если учетные данные были неверно введены несколько раз. Контроль входа уникален для логина / email / IP-адреса пользователя:
 
     <?php
 
@@ -195,9 +195,9 @@ If you are using Laravel's built-in `AuthController` class, the `Illuminate\Foun
 <a name="authenticating-users"></a>
 ## Ручная аутентификация пользователей
 
-Of course, you are not required to use the authentication controllers included with Laravel. If you choose to remove these controllers, you will need to manage user authentication using the Laravel authentication classes directly. Don't worry, it's a cinch!
+Конечно, Вы не обязаны использовать контроллеры аутентификации, включенных в Laravel. Если Вы решили удалить эти контроллеры, для управления аутентификацией пользователей Вам нужно будет использовать классы непосредственно Laravel. Не волнуйтесь, это не сложно!
 
-We will access Laravel's authentication services via the `Auth` [facade](/docs/{{version}}/facades), so we'll need to make sure to import the `Auth` facade at the top of the class. Next, let's check out the `attempt` method:
+Для получения доступа к сервисам аутентификации Laravel, [фасад](/docs/{{version}}/facades) `Auth` должен быть импортирован в верхней части класса. Затем проверьте метод `attempt`:
 
     <?php
 
@@ -221,35 +221,35 @@ We will access Laravel's authentication services via the `Auth` [facade](/docs/{
         }
     }
 
-The `attempt` method accepts an array of key / value pairs as its first argument. The values in the array will be used to find the user in your database table. So, in the example above, the user will be retrieved by the value of the `email` column. If the user is found, the hashed password stored in the database will be compared with the hashed `password` value passed to the method via the array. If the two hashed passwords match an authenticated session will be started for the user.
+Метод `attempt` принимает массив пар ключей и значений в качестве первого аргумента. Значения в массиве будут использоваться, чтобы найти пользователя в таблице базы данных. Таким образом, в приведенном выше примере, пользователь будет извлечен по значению из колонки `email`. Если пользователь найден, произойдет сравнение хэшированного пароля из базы данных с захэшированным паролем, введенным пользователем. Если два хэша совпадут, сессия пользователя будет считаться авторизованной.
 
-The `attempt` method will return `true` if authentication was successful. Otherwise, `false` will be returned.
+Если пользователь успешно аутентифицирован, метод `attempt` вернет `true`, иначе - `false`.
 
-The `intended` method on the redirector will redirect the user to the URL they were attempting to access before being caught by the authentication filter. A fallback URI may be given to this method in case the intended destination is not available.
+Метод `intended` будет перенаправлять пользователя на URL, к которому пользователь пытается получить доступ. Можно указать резервный URL, если основной недоступен.
 
-#### Specifying Additional Conditions
+#### Дополнительные условия
 
-If you wish, you also may add extra conditions to the authentication query in addition to the user's e-mail and password. For example, we may verify that user is marked as "active":
+При желании, Вы также можете добавить дополнительные условия при аутентификации помимо email и пароля. Например, мы можем проверить помечен ли пользователь как "активный":
 
     if (Auth::attempt(['email' => $email, 'password' => $password, 'active' => 1])) {
         // The user is active, not suspended, and exists.
     }
 
-> **Note:** In these examples, `email` is not a required option, it is merely used as an example. You should use whatever column name corresponds to a "username" in your database.
+> **Примечание:** В этих примерах `email` является необязательной опцией, используемой в качестве примера. Вы должны использовать любую колонку, отвечающую за логин пользователя в Вашей базе данных.
 
-#### Accessing Specific Guard Instances
+#### Защита доступа к определенным экземплярам
 
-You may specify which guard instance you would like to utilize using the `guard` method on the `Auth` facade. This allows you to manage authentication for separate parts of your application using entirely separate authenticatable models or user tables.
+Вы можете указать какого бы защитника хотите использовать с помощью метода `guard` в фасаде `Auth`. Это позволит управлять проверкой подлинности для отдельных частей приложения с использованием совершенно разных моделей или таблиц пользователей.
 
-The guard name passed to the `guard` method should correspond to one of the guards configured in your `auth.php` configuration file:
+Имя защитника передается в метод `guard`, который должен соответствовать одному из настроенных в конфигурационном файле `auth.php`:
 
     if (Auth::guard('admin')->attempt($credentials)) {
         //
     }
 
-#### Logging Out
+#### Выход из системы
 
-To log users out of your application, you may use the `logout` method on the `Auth` facade. This will clear the authentication information in the user's session:
+Для отмены регистрации пользователя используйте метод `logout` фасада `Auth`:
 
     Auth::logout();
 
