@@ -22,7 +22,7 @@
     - [Настройка](#password-customization)
 - [Аутентификация через социальные сети](https://github.com/laravel/socialite)
 - [Добавление пользовательской защиты](#adding-custom-guards)
-- [Добавление другийх провайдеров пользователя](#adding-custom-user-providers)
+- [Добавление других провайдеров пользователя](#adding-custom-user-providers)
 - [События](#events)
 
 <a name="introduction"></a>
