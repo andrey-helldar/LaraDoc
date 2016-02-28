@@ -256,13 +256,13 @@ Laravel обеспечивает быстрое создание всех нео
 <a name="remembering-users"></a>
 ### Запоминание пользователей
 
-If you would like to provide "remember me" functionality in your application, you may pass a boolean value as the second argument to the `attempt` method, which will keep the user authenticated indefinitely, or until they manually logout. Of course, your `users` table must include the string `remember_token` column, which will be used to store the "remember me" token.
+Для реализации функционала "запомнить меня", Вы можете передать логическое значение в качестве аргумента в метод `attempt`, который "запомнит" пользователя на неопределенный срок, либо до выхода из системы вручную. Таблица `users` должна содержать столбец `remember_token` для хранения маркера авторизации.
 
     if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
         // The user is being remembered...
     }
 
-If you are "remembering" users, you may use the `viaRemember` method to determine if the user was authenticated using the "remember me" cookie:
+Если Вы "запоминаете" пользователей, то можете использовать метод `viaRemember` для проверки кук на наличие маркера "запомнить меня":
 
     if (Auth::viaRemember()) {
         //
@@ -271,40 +271,40 @@ If you are "remembering" users, you may use the `viaRemember` method to determin
 <a name="other-authentication-methods"></a>
 ### Другие методы аутентификации
 
-#### Authenticate A User Instance
+#### Аутентификация пользователя
 
-If you need to log an existing user instance into your application, you may call the `login` method with the user instance. The given object must be an implementation of the `Illuminate\Contracts\Auth\Authenticatable` [contract](/docs/{{version}}/contracts). Of course, the `App\User` model included with Laravel already implements this interface:
+При необходимости ручной авторизации пользователя, Вы можете вызвать метод `login` с указанием логина. Данный объект реализуется из [контрактов](/docs/{{version}}/contracts) `Illuminate\Contracts\Auth\Authenticatable`. Конечно, модель `App\User` включена в Laravel и реализует эту возможность:
 
     Auth::login($user);
 
-#### Authenticate A User By ID
+#### Аутентификация пользователя по ID
 
-To log a user into the application by their ID, you may use the `loginUsingId` method. This method simply accepts the primary key of the user you wish to authenticate:
+Для аутентификации пользователя по идентификатору (`ID`), нужно использовать метод `loginUsingId`. Этот метод принимает первичный ключ пользователя:
 
     Auth::loginUsingId(1);
 
-#### Authenticate A User Once
+#### Аутентификация пользователя после того, как
 
-You may use the `once` method to log a user into the application for a single request. No sessions or cookies will be utilized, which may be helpful when building a stateless API. The `once` method has the same signature as the `attempt` method:
+Вы можете использовать метод `once` для аутентификации пользователя в приложении. Сессии или куки не будут использоваться. Метод `once` имеет ту же подпись, что и метод `attempt`:
 
     if (Auth::once($credentials)) {
         //
     }
 
 <a name="http-basic-authentication"></a>
-## HTTP Basic Authentication
+## Простая аутентификация HTTP
 
-[HTTP Basic Authentication](http://en.wikipedia.org/wiki/Basic_access_authentication) provides a quick way to authenticate users of your application without setting up a dedicated "login" page. To get started, attach the `auth.basic` [middleware](/docs/{{version}}/middleware) to your route. The `auth.basic` middleware is included with the Laravel framework, so you do not need to define it:
+[Базовая аутентификация HTTP](http://en.wikipedia.org/wiki/Basic_access_authentication) обеспечивает быструю аутентификацию пользователя Вашего приложения без создания специальной страницы входа. Для начала, укажите [посредника](/docs/{{version}}/middleware) `auth.basic` в маршруте. Посредник `auth.basic` входит в состав фреймворка Laravel, так что его можно использовать сразу:
 
     Route::get('profile', ['middleware' => 'auth.basic', function() {
         // Only authenticated users may enter...
     }]);
 
-Once the middleware has been attached to the route, you will automatically be prompted for credentials when accessing the route in your browser. By default, the `auth.basic` middleware will use the `email` column on the user record as the "username".
+После того, как посредник прикреплен к маршруту, автоматически будет предложено ввести учетные данные при получении доступа к маршруту в браузере. По-умолчанию, посредник `auth.basic` использует колонку `email` в качестве логина.
 
-#### A Note On FastCGI
+#### Обратите внимание на FastCGI
 
-If you are using PHP FastCGI, HTTP Basic authentication may not work correctly out of the box. The following lines should be added to your `.htaccess` file:
+Если Вы используете PHP FastCGI, простая аутентификация HTTP может работать некорректно "из коробки". Вам необходимо добавить следующие строки в файл `.htaccess`:
 
     RewriteCond %{HTTP:Authorization} ^(.+)$
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -312,7 +312,7 @@ If you are using PHP FastCGI, HTTP Basic authentication may not work correctly o
 <a name="stateless-http-basic-authentication"></a>
 ### Базовая аутентифицация Stateless HTTP
 
-You may also use HTTP Basic Authentication without setting a user identifier cookie in the session, which is particularly useful for API authentication. To do so, [define a middleware](/docs/{{version}}/middleware) that calls the `onceBasic` method. If no response is returned by the `onceBasic` method, the request may be passed further into the application:
+Также можно использовать простую аутентификацию HTTP без записи идентификатора пользователя в куки сессии, что особенно полезно для аутентификации в API. Для этого определяют [посредника](/docs/{{version}}/middleware), вызывающего метод `onceBasic`. Если ответ метода не возвращается (`false`), то запрос будет передан дальше:
 
     <?php
 
@@ -337,7 +337,7 @@ You may also use HTTP Basic Authentication without setting a user identifier coo
 
     }
 
-Next, [register the route middleware](/docs/{{version}}/middleware#registering-middleware) and attach it to a route:
+Ждалее, [зарегистрируйте маршрут посредника](/docs/{{version}}/middleware#registering-middleware) и прикрепите его к маршруту:
 
     Route::get('api/user', ['middleware' => 'auth.basic.once', function() {
         // Only authenticated users may enter...
@@ -349,20 +349,20 @@ Next, [register the route middleware](/docs/{{version}}/middleware#registering-m
 <a name="resetting-database"></a>
 ### Настройка базы данных
 
-Most web applications provide a way for users to reset their forgotten passwords. Rather than forcing you to re-implement this on each application, Laravel provides convenient methods for sending password reminders and performing password resets.
+Большинство приложений позволяют пользователям с легкостью восстанавливать забытые пароли. Вместо постоянной реализации этого механизма вручную, Laravel содержит эти методы "из коробки".
 
-To get started, verify that your `App\User` model implements the `Illuminate\Contracts\Auth\CanResetPassword` contract. Of course, the `App\User` model included with the framework already implements this interface, and uses the `Illuminate\Auth\Passwords\CanResetPassword` trait to include the methods needed to implement the interface.
+Для начала, проверьте модель `App\User` для реализации `Illuminate\Contracts\Auth\CanResetPassword`. Конечно, модель `App\User` уже поддерживается фреймворком, а также использует трейт `Illuminate\Auth\Passwords\CanResetPassword` для его реализации.
 
-#### Generating The Reset Token Table Migration
+#### Генерация тококена сброса в таблице миграции
 
-Next, a table must be created to store the password reset tokens. The migration for this table is included with Laravel out of the box, and resides in the `database/migrations` directory. So, all you need to do is migrate:
+Теперь необходимо создать таблицу для сброса паролей. Миграция для этой таблицы включена в Laravel "из коробки" и расположена в папке `database/migrations`. Так что, все что нужно сделать, это:
 
     php artisan migrate
 
 <a name="resetting-routing"></a>
 ### Настройка маршрутизации
 
-Laravel includes an `Auth\PasswordController` that contains the logic necessary to reset user passwords. All of the routes needed to perform password resets may be generated using the `make:auth` Artisan command:
+Контроллер `Auth\PasswordController` фреймворка содержит логику сброса паролей. Все необходимые маршруты могут быть созданы, выполнив одну команду:
 
     php artisan make:auth
 
